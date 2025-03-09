@@ -1,0 +1,89 @@
+**Database Backup and Recovery Guide**
+
+## **1. Overview**
+This document provides backup and recovery scripts along with a summary report on how to back up a database and restore it in case of failure.
+
+---
+
+## **2. Backup Process**
+### **Step 1: Backup a MySQL Database**
+Use `mysqldump` to create a backup of the database:
+
+```sh
+mysqldump -u root -p my_database > my_database_backup.sql
+```
+
+To back up all databases:
+
+```sh
+mysqldump -u root -p --all-databases > all_databases_backup.sql
+```
+
+### **Step 2: Backup a PostgreSQL Database**
+Use `pg_dump` to back up a PostgreSQL database:
+
+```sh
+pg_dump -U postgres -F c -b -v -f my_database_backup.dump my_database
+```
+
+To back up all databases:
+
+```sh
+pg_dumpall -U postgres > all_databases_backup.sql
+```
+
+---
+
+## **3. Recovery Process**
+### **Step 1: Restore a MySQL Database**
+To restore the MySQL database from the backup file:
+
+```sh
+mysql -u root -p my_database < my_database_backup.sql
+```
+
+To restore all databases:
+
+```sh
+mysql -u root -p < all_databases_backup.sql
+```
+
+### **Step 2: Restore a PostgreSQL Database**
+To restore a PostgreSQL database:
+
+```sh
+pg_restore -U postgres -d my_database -v my_database_backup.dump
+```
+
+To restore all databases:
+
+```sh
+psql -U postgres -f all_databases_backup.sql
+```
+
+---
+
+## **4. Data Integrity Checks After Restore**
+### **Verify Row Counts Before and After Restore**
+#### **In MySQL:**
+```sql
+SELECT COUNT(*) FROM table_name;
+```
+#### **In PostgreSQL:**
+```sql
+SELECT COUNT(*) FROM table_name;
+```
+
+### **Verify Sample Records**
+```sql
+SELECT * FROM table_name ORDER BY id LIMIT 10;
+```
+
+### **Check for NULL Values in Critical Fields**
+```sql
+SELECT * FROM table_name WHERE critical_column IS NULL;
+```
+
+---
+
+
